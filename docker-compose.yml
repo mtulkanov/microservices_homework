@@ -2,41 +2,41 @@ version: '2'
 
 services:
   eureka:
-    image: springcloud/eureka
+    image: mtulkanov/eureka-server
     ports:
       - "8761:8761"
-  mongo:
-    image: mongo
-    ports:
-      - "27017:27017"
-  pc:
-      image: humb1t/pc
-      ports:
-        - '8081:8080'
-        - '5010:5005'
-      depends_on:
-        - eureka
-        - mongo
-      environment:
-        SPRING_DATA_MONGODB_HOST: mongo
-        EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
-        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
-  po:
-      image: humb1t/po
-      ports:
-        - '8082:8080'
-        - '5020:5005'
-      links:
-        - pc
-      depends_on:
-        - eureka
-        - mongo
-        - pc
-      environment:
-        SPRING_DATA_MONGODB_HOST: mongo
-        EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
-        pcurl: 'pc:8080'
-        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
+#  mongo:
+#    image: mongo
+#    ports:
+#      - "27017:27017"
+#  pc:
+#      image: humb1t/pc
+#      ports:
+#        - '8081:8080'
+#        - '5010:5005'
+#      depends_on:
+#        - eureka
+#        - mongo
+#      environment:
+#        SPRING_DATA_MONGODB_HOST: mongo
+#        EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
+#        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
+#  po:
+#      image: humb1t/po
+#      ports:
+#        - '8082:8080'
+#        - '5020:5005'
+#      links:
+#        - pc
+#      depends_on:
+#        - eureka
+#        - mongo
+#        - pc
+#      environment:
+#        SPRING_DATA_MONGODB_HOST: mongo
+#        EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
+#        pcurl: 'pc:8080'
+#        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
 networks:
     default:
         driver: bridge
