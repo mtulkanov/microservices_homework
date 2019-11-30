@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+spring:
+  output:
+    ansi:
+      enabled: always
+  data:
+    mongodb:
+      host: mongo
+  cloud:
+    discovery:
+      enabled: false

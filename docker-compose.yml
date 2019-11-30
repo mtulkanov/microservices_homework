@@ -1,42 +1,81 @@
-version: '2'
+version: '3'
 
 services:
-  eureka:
-    image: mtulkanov/eureka-server
+  config:
+    image: mtulkanov/config:1.0.0
+  eureka1:
+    image: mtulkanov/eureka:1.0.0
+    depends_on:
+      - config
+    restart: on-failure
+    environment:
+      - spring.profiles.active=peer1
+  eureka2:
+    image: mtulkanov/eureka:1.0.0
+    depends_on:
+      - config
+    restart: on-failure
+    environment:
+      - spring.profiles.active=peer2
+  mongo:
+    image: mongo
     ports:
-      - "8761:8761"
-#  mongo:
-#    image: mongo
-#    ports:
-#      - "27017:27017"
-#  pc:
-#      image: humb1t/pc
-#      ports:
-#        - '8081:8080'
-#        - '5010:5005'
-#      depends_on:
-#        - eureka
-#        - mongo
-#      environment:
-#        SPRING_DATA_MONGODB_HOST: mongo
-#        EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
-#        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
-#  po:
-#      image: humb1t/po
-#      ports:
-#        - '8082:8080'
-#        - '5020:5005'
-#      links:
-#        - pc
-#      depends_on:
-#        - eureka
-#        - mongo
-#        - pc
-#      environment:
-#        SPRING_DATA_MONGODB_HOST: mongo
-#        EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
-#        pcurl: 'pc:8080'
-#        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
-networks:
-    default:
-        driver: bridge
+      - "27017:27017"
+  pc:
+    image: mtulkanov/pc:1.0.0
+    depends_on:
+      - config
+      - eureka1
+      - eureka2
+      - mongo
+    restart: on-failure
+  po:
+    image: mtulkanov/po:1.0.0
+    depends_on:
+      - config
+      - eureka1
+      - eureka2
+      - mongo
+      - pc
+    restart: on-failure
+  zuul:
+    image: mtulkanov/zuul:1.0.0
+    ports:
+      - '9999:8080'
+    depends_on:
+      - config
+      - eureka1
+      - eureka2
+    restart: on-failure
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.2
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    environment:
+      - 'discovery.type=single-node'
+      - 'xpack.security.enabled=false'
+    networks:
+      - default
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.4.2
+    user: root
+    depends_on:
+      - elasticsearch
+    restart: on-failure
+    volumes:
+      - /root/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.4.2
+    depends_on:
+      - elasticsearch
+    ports:
+      - '5601:5601'
+    environment:
+      - 'elasticsearch.hosts=http://elasticsearch:9200'
+      - 'xpack.security.enabled=false'
+    restart: on-failure
+    networks:
+      - default
