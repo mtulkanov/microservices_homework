@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.1.RELEASE</version>
+        <version>2.1.7.RELEASE</version>
         <relativePath/>
     </parent>
 
@@ -21,15 +21,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <spring-cloud.version>Hoxton.RC2</spring-cloud.version>
+        <spring-cloud.version>Greenwich.SR4</spring-cloud.version>
     </properties>
 
     <modules>
-        <module>config</module>
-        <module>eureka</module>
-        <module>pc</module>
-        <module>po</module>
-        <module>zuul</module>
+        <module>infra/config</module>
+        <module>infra/eureka</module>
+        <module>infra/zuul</module>
+        <module>services/pc</module>
+        <module>services/po</module>
     </modules>
 
     <dependencyManagement>
@@ -40,6 +40,16 @@
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback.contrib</groupId>
+                <artifactId>logback-json-classic</artifactId>
+                <version>0.1.5</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback.contrib</groupId>
+                <artifactId>logback-jackson</artifactId>
+                <version>0.1.5</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: po
+  cloud:
+    config:
+      uri: http://config:8888
+      fail-fast: true
+logging:
+  config: ${spring.cloud.config.uri}/*/*/master/logback.xml
