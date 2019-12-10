@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 @Data
-class ProductSpecification {
+public class ProductSpecification {
     @Id
     private String id;
     private String name;
