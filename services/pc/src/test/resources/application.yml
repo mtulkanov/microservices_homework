@@ -7,7 +7,7 @@ spring:
       enabled: always
   data:
     mongodb:
-      host: mongo
+      host: localhost
   cloud:
     discovery:
       enabled: false
