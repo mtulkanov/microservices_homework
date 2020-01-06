@@ -1,6 +1,6 @@
-package com.mtulkanov.eurekaserver.po;
+package com.mtulkanov.po;
 
-import com.mtulkanov.eurekaserver.po.order.clients.ProductSpecificationRepository;
+import com.mtulkanov.po.clients.ProductSpecificationRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;

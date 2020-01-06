@@ -1,4 +1,4 @@
-package com.mtulkanov.eurekaserver.po.order.clients;
+package com.mtulkanov.po.clients;
 
 import com.mtulkanov.eurekaserver.pc.catalog.ProductSpecification;
 import org.springframework.cloud.openfeign.FeignClient;

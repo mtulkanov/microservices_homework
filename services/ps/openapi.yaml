@@ -1,0 +1,51 @@
+openapi: 3.0.1
+info:
+  title: Shipment Service
+  description: This is a simple Shipment microservice for EPAM microservices learning
+    course homework.
+  version: 1.0.0
+servers:
+  - url: http://ps/
+tags:
+  - name: shipment
+    description: Shipment service for homework
+  - name: doc
+    description: OpenAPI specification
+paths:
+  /shipment/{shipmentId}:
+    patch:
+      tags:
+        - shipment
+      summary: Update a shipment
+      description: Used for updating shipment status
+      parameters:
+        - name: shipmentId
+          in: path
+          description: ID of a shipment to update
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successfull operation
+          content: {}
+        400:
+          description: No ID supplied
+          content: {}
+        404:
+          description: Shipment not found
+          content: {}
+  /doc:
+    get:
+      tags:
+        - doc
+      summary: OpenAPI shipment service specification
+      responses:
+        200:
+          description: Plaintext OpenAPI shipment service specification in a YAML format
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "openapi: 3.0.1"
+components: {}

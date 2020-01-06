@@ -1,4 +1,4 @@
-package com.mtulkanov.eurekaserver.po;
+package com.mtulkanov.ps;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,10 +7,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PoApplicationTests {
+public class PsApplicationTest {
 
     @Test
     public void contextLoads() {
     }
-
 }

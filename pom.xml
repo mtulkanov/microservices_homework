@@ -20,7 +20,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <spring-cloud.version>Greenwich.SR4</spring-cloud.version>
     </properties>
 
@@ -30,6 +30,7 @@
         <module>infra/zuul</module>
         <module>services/pc</module>
         <module>services/po</module>
+        <module>services/ps</module>
     </modules>
 
     <dependencies>

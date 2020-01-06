@@ -1,4 +1,4 @@
-package com.mtulkanov.eurekaserver.po.order;
+package com.mtulkanov.po.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,9 +13,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 @Data
 @AllArgsConstructor
-class ProductOrder {
+public class ProductOrder {
+    public static final String REJECTED = "REJECTED";
+    public static final String SUSPENDED = "SUSPENDED";
+
     @Id
     private String id;
     private String specificationId;
     private Long quantity;
+    private String status;
 }
