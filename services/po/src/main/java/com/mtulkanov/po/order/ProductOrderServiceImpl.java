@@ -1,7 +1,7 @@
 package com.mtulkanov.po.order;
 
 import com.mtulkanov.po.clients.ProductSpecificationRepository;
-import com.mtulkanov.po.events.EventService;
+import com.mtulkanov.po.events.KafkaService;
 import com.mtulkanov.po.exceptions.EventNotRaisedException;
 import com.mtulkanov.po.exceptions.SpecificationNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class ProductOrderServiceImpl implements ProductOrderService {
     private final ProductOrderRepository orderRepository;
     private final ProductSpecificationRepository specificationRepository;
-    private final EventService eventService;
+    private final KafkaService kafkaService;
 
     public ProductOrder orderProductBySpecificationId(String specificationId) {
         if (specificationRepository.existsById(specificationId) == null) {
@@ -36,7 +36,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         productOrder = orderRepository.save(productOrder);
         log.info("Created {}", productOrder);
         try {
-            eventService.orderCreated(productOrder);
+            kafkaService.orderCreated(productOrder);
         } catch (EventNotRaisedException exception) {
             log.error("Could not raise OrderCreated event", exception);
             productOrder.setStatus(ProductOrder.REJECTED);

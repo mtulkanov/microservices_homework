@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class EventServiceKafka implements EventService {
+public class KafkaServiceImpl implements KafkaService {
 
     public static final String OUTPUT_EVENT_TOPIC = "OUTPUT_EVENT";
 

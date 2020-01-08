@@ -4,16 +4,14 @@ import com.mtulkanov.po.exceptions.EventNotRaisedException;
 import com.mtulkanov.po.order.ProductOrder;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.kafka.core.KafkaTemplate;
 
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class EventServiceKafkaTest {
+public class KafkaServiceImplTest {
 
     private static final String ORDER_ID = "ORDER_ID";
     private static final String SPECIFICATION_ID = "SPECIFICATION_ID";
@@ -22,7 +20,7 @@ public class EventServiceKafkaTest {
     public void kafkaTemplateCalledWithCorrectParameters() throws EventNotRaisedException {
         // given
         KafkaTemplate<String, Event> kafkaTemplate = Mockito.mock(KafkaTemplate.class);
-        EventService eventService = new EventServiceKafka(kafkaTemplate);
+        KafkaService kafkaService = new KafkaServiceImpl(kafkaTemplate);
         ProductOrder order = new ProductOrder(
                 ORDER_ID,
                 SPECIFICATION_ID,
@@ -31,15 +29,20 @@ public class EventServiceKafkaTest {
         );
 
         // when
-        eventService.orderCreated(order);
+        kafkaService.orderCreated(order);
 
         // then
         ArgumentMatcher<Event> argumentMatcher = event ->
                 event.getType().equals(Event.ORDER_CREATED)
                 && event.getOrderId().equals(ORDER_ID);
         verify(kafkaTemplate).send(
-                eq(EventServiceKafka.OUTPUT_EVENT_TOPIC),
+                eq(KafkaServiceImpl.OUTPUT_EVENT_TOPIC),
                 argThat(argumentMatcher)
         );
+    }
+
+    @Test
+    public void shouldRejectOrderOnKafkaFailure() {
+
     }
 }

@@ -2,7 +2,7 @@ package com.mtulkanov.po.order;
 
 import com.mtulkanov.eurekaserver.pc.catalog.ProductSpecification;
 import com.mtulkanov.po.clients.ProductSpecificationRepository;
-import com.mtulkanov.po.events.EventService;
+import com.mtulkanov.po.events.KafkaService;
 import com.mtulkanov.po.exceptions.EventNotRaisedException;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class ProductOrderServiceImplTest {
     private static final String SPECIFICATION_ID = "SPECIFICATION_ID";
 
     private ProductOrder order;
-    private EventService eventService;
+    private KafkaService kafkaService;
     private ProductOrderService service;
 
     @Before
@@ -38,12 +38,12 @@ public class ProductOrderServiceImplTest {
         when(orderRepository.save(any()))
                 .thenReturn(order);
 
-        eventService = mock(EventService.class);
+        kafkaService = mock(KafkaService.class);
 
         service = new ProductOrderServiceImpl(
                 orderRepository,
                 specificationRepository,
-                eventService
+                kafkaService
         );
     }
 
@@ -62,7 +62,7 @@ public class ProductOrderServiceImplTest {
         service.orderProductBySpecificationId(SPECIFICATION_ID);
 
         // then
-        verify(eventService).orderCreated(order);
+        verify(kafkaService).orderCreated(order);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class ProductOrderServiceImplTest {
         // given
         EventNotRaisedException exception = new EventNotRaisedException("Could not raise event \"OrderCreated\"");
         doThrow(exception)
-                .when(eventService)
+                .when(kafkaService)
                 .orderCreated(any());
 
         // when
