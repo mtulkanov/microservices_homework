@@ -2,23 +2,29 @@ package com.mtulkanov.po.order;
 
 import com.mtulkanov.eurekaserver.pc.catalog.ProductSpecification;
 import com.mtulkanov.po.clients.ProductSpecificationRepository;
-import com.mtulkanov.po.events.KafkaService;
+import com.mtulkanov.po.kafka.KafkaService;
 import com.mtulkanov.po.exceptions.EventNotRaisedException;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.springframework.util.concurrent.FailureCallback;
+import org.springframework.util.concurrent.SuccessCallback;
 
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.doThrow;
 
 public class ProductOrderServiceImplTest {
-    private static final String ORDER_ID = "ORDER_ID";
+    private static final Long ORDER_ID = 1L;
     private static final String SPECIFICATION_ID = "SPECIFICATION_ID";
 
     private ProductOrder order;
     private KafkaService kafkaService;
-    private ProductOrderService service;
+    private ProductOrderService orderService;
 
     @Before
     public void setup() {
@@ -37,10 +43,12 @@ public class ProductOrderServiceImplTest {
         var orderRepository = mock(ProductOrderRepository.class);
         when(orderRepository.save(any()))
                 .thenReturn(order);
+        when(orderRepository.findById(any()))
+                .thenReturn(Optional.of(order));
 
         kafkaService = mock(KafkaService.class);
 
-        service = new ProductOrderServiceImpl(
+        orderService = new ProductOrderServiceImpl(
                 orderRepository,
                 specificationRepository,
                 kafkaService
@@ -50,19 +58,19 @@ public class ProductOrderServiceImplTest {
     @Test
     public void shouldCreateSuspendedOrder() {
         // when
-        ProductOrder orderReturned = service.orderProductBySpecificationId(SPECIFICATION_ID);
+        ProductOrder orderReturned = orderService.orderProductBySpecificationId(SPECIFICATION_ID);
 
         // then
-        assertTrue(orderReturned.getStatus().equals(ProductOrder.SUSPENDED));
+        assertEquals(orderReturned.getStatus(), ProductOrder.SUSPENDED);
     }
 
     @Test
     public void shouldRaiseEventOnProductOrderCreation() throws EventNotRaisedException {
         // when
-        service.orderProductBySpecificationId(SPECIFICATION_ID);
+        orderService.orderProductBySpecificationId(SPECIFICATION_ID);
 
         // then
-        verify(kafkaService).orderCreated(order);
+        verify(kafkaService).orderCreated(eq(order), isA(SuccessCallback.class), isA(FailureCallback.class));
     }
 
     @Test
@@ -71,12 +79,30 @@ public class ProductOrderServiceImplTest {
         EventNotRaisedException exception = new EventNotRaisedException("Could not raise event \"OrderCreated\"");
         doThrow(exception)
                 .when(kafkaService)
-                .orderCreated(any());
+                .orderCreated(
+                        any(),
+                        isA(SuccessCallback.class),
+                        isA(FailureCallback.class)
+                );
 
         // when
-        ProductOrder orderReturned = service.orderProductBySpecificationId(SPECIFICATION_ID);
+        ProductOrder orderReturned = orderService.orderProductBySpecificationId(SPECIFICATION_ID);
 
         // then
-        assertTrue(orderReturned.getStatus().equals(ProductOrder.REJECTED));
+        assertEquals(orderReturned.getStatus(), ProductOrder.REJECTED);
+    }
+
+    @Test
+    public void shouldRejectOrder() {
+        // when
+        ProductOrder rejectedOrder = orderService.rejectOrder(ORDER_ID);
+
+        // then
+        assertEquals(ProductOrder.REJECTED, rejectedOrder.getStatus());
+    }
+
+    @Test
+    public void shouldThrowCorrectExceptionIfOrderWasNotFoundBeforeRejection() {
+        // given
     }
 }

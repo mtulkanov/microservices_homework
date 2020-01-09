@@ -1,4 +1,4 @@
-package com.mtulkanov.po.events;
+package com.mtulkanov.po.kafka;
 
 import lombok.Data;
 
@@ -7,5 +7,5 @@ public class Event {
     public static final String ORDER_CREATED = "ORDER_CREATED";
 
     private final String type;
-    private final String orderId;
+    private final Long orderId;
 }

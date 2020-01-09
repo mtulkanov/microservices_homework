@@ -1,4 +1,4 @@
-package com.mtulkanov.po.events;
+package com.mtulkanov.po.kafka;
 
 import com.mtulkanov.po.exceptions.EventNotRaisedException;
 import com.mtulkanov.po.order.ProductOrder;
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 
 public class KafkaServiceImplTest {
 
-    private static final String ORDER_ID = "ORDER_ID";
+    private static final Long ORDER_ID = 1L;
     private static final String SPECIFICATION_ID = "SPECIFICATION_ID";
 
     @Test
@@ -29,7 +29,7 @@ public class KafkaServiceImplTest {
         );
 
         // when
-        kafkaService.orderCreated(order);
+        kafkaService.orderCreated(order, null, null);
 
         // then
         ArgumentMatcher<Event> argumentMatcher = event ->
