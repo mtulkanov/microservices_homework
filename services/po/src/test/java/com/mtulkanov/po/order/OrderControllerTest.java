@@ -9,7 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class OrderControllerTest {
-    private static final Long ORDER_ID = 1L;
+    private static final String ORDER_ID = "ORDER_ID";
     private static final String SPECIFICATION_ID = "SPECIFICATION_ID";
 
     private ProductOrder order;

@@ -22,7 +22,7 @@ public class KafkaServiceImpl implements KafkaService {
             ProductOrder productOrder,
             SuccessCallback<SendResult<String, Event>> successCallback,
             FailureCallback failureCallback
-    ) throws EventNotRaisedException {
+    ) {
         Event event = new Event(Event.ORDER_CREATED, productOrder.getId());
         kafkaTemplate.send(OUTPUT_EVENT_TOPIC, event);
     }

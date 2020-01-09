@@ -1,11 +1,11 @@
 package com.mtulkanov.po.order;
 
 import com.mtulkanov.po.clients.ProductSpecificationRepository;
+import com.mtulkanov.po.exceptions.EventNotRaisedException;
 import com.mtulkanov.po.exceptions.OrderNotFoundException;
+import com.mtulkanov.po.exceptions.SpecificationNotFoundException;
 import com.mtulkanov.po.kafka.Event;
 import com.mtulkanov.po.kafka.KafkaService;
-import com.mtulkanov.po.exceptions.EventNotRaisedException;
-import com.mtulkanov.po.exceptions.SpecificationNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.support.SendResult;
@@ -42,26 +42,40 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         );
         productOrder = orderRepository.save(productOrder);
         log.info("Created {}", productOrder);
-        final Long orderId = productOrder.getId();
-        try {
-            SuccessCallback<SendResult<String, Event>> successCallback = sendResult ->
-                    log.info(
-                            "Event OrderCreated for order {} successfully saved to kafka",
-                            orderId
-                    );
-            FailureCallback failureCallback = ex -> rejectOrder(orderId);
-            kafkaService.orderCreated(productOrder, successCallback, failureCallback);
-        } catch (EventNotRaisedException exception) {
-            log.error("Could not raise OrderCreated event", exception);
-            productOrder.setStatus(ProductOrder.REJECTED);
-            orderRepository.save(productOrder);
-        }
+        final String orderId = productOrder.getId();
+        var successCallback = successCallback(orderId);
+        var failureCallback = failureCallback(orderId);
+        kafkaService.orderCreated(productOrder, successCallback, failureCallback);
         return productOrder;
     }
 
-    public ProductOrder rejectOrder(Long orderId) {
+    public ProductOrder rejectOrder(String orderId) {
         Optional<ProductOrder> orderOptional = orderRepository.findById(orderId);
-        orderOptional.ifPresent(order -> order.setStatus(ProductOrder.REJECTED));
+        orderOptional.ifPresent(order -> {
+            order.setStatus(ProductOrder.REJECTED);
+            orderRepository.save(order);
+            log.info("Order {} was rejected", orderId);
+        });
         return orderOptional.orElseThrow(OrderNotFoundException::new);
+    }
+
+    private SuccessCallback<SendResult<String, Event>> successCallback(
+            final String orderId
+    ) {
+        String message = "Event ORDER_CREATED for order {}" +
+                " was successfully saved to kafka with offset {}";
+        return sendResult -> log.info(
+                message,
+                orderId,
+                sendResult.getRecordMetadata().offset()
+        );
+    }
+
+    private FailureCallback failureCallback(final String orderId) {
+        String message = String.format(
+                "Saving ORDER_CREATE event for order %s failed because of exception",
+                orderId
+        );
+        return throwable -> log.warn(message, throwable);
     }
 }

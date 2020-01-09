@@ -7,5 +7,5 @@ public class Event {
     public static final String ORDER_CREATED = "ORDER_CREATED";
 
     private final String type;
-    private final Long orderId;
+    private final String orderId;
 }

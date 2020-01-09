@@ -13,11 +13,11 @@ import static org.mockito.Mockito.verify;
 
 public class KafkaServiceImplTest {
 
-    private static final Long ORDER_ID = 1L;
+    private static final String ORDER_ID = "ORDER_ID";
     private static final String SPECIFICATION_ID = "SPECIFICATION_ID";
 
     @Test
-    public void kafkaTemplateCalledWithCorrectParameters() throws EventNotRaisedException {
+    public void kafkaTemplateCalledWithCorrectParameters() {
         // given
         KafkaTemplate<String, Event> kafkaTemplate = Mockito.mock(KafkaTemplate.class);
         KafkaService kafkaService = new KafkaServiceImpl(kafkaTemplate);
@@ -39,10 +39,5 @@ public class KafkaServiceImplTest {
                 eq(KafkaServiceImpl.OUTPUT_EVENT_TOPIC),
                 argThat(argumentMatcher)
         );
-    }
-
-    @Test
-    public void shouldRejectOrderOnKafkaFailure() {
-
     }
 }

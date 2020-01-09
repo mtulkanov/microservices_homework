@@ -12,5 +12,5 @@ public interface KafkaService {
             ProductOrder productOrder,
             SuccessCallback<SendResult<String, Event>> successCallback,
             FailureCallback failureCallback
-    ) throws EventNotRaisedException;
+    );
 }

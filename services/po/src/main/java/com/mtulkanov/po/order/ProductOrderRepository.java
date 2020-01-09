@@ -9,5 +9,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
  * @author Nikita_Puzankov
  */
 @RepositoryRestResource(exported = false)
-interface ProductOrderRepository extends MongoRepository<ProductOrder, Long> {
+interface ProductOrderRepository extends MongoRepository<ProductOrder, String> {
 }

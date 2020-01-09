@@ -18,7 +18,7 @@ public class ProductOrder {
     public static final String SUSPENDED = "SUSPENDED";
 
     @Id
-    private Long id;
+    private String id;
     private String specificationId;
     private Long quantity;
     private String status;
