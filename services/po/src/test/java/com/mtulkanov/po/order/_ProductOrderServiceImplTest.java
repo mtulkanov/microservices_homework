@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class ProductOrderServiceImplTest {
+public class _ProductOrderServiceImplTest {
     private static final String ORDER_ID = "ORDER_ID";
     private static final String SPECIFICATION_ID = "SPECIFICATION_ID";
 

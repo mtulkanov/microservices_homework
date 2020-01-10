@@ -14,4 +14,10 @@ public interface KafkaService {
     );
 
     void orderCreated(ProductOrder productOrder);
+
+    void fire(
+            Event event,
+            SuccessCallback<SendResult<String, Event>> successCallback,
+            FailureCallback failureCallback
+    );
 }

@@ -11,3 +11,21 @@ spring:
   cloud:
     discovery:
       enabled: false
+  kafka:
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "com.mtulkanov.po.*"
+    consumer:
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "com.mtulkanov.po.*"
+  json:
+    trusted:
+      packages: "*"
