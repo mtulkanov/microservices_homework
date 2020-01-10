@@ -2,16 +2,13 @@ package com.mtulkanov.po.order;
 
 import com.mtulkanov.eurekaserver.pc.catalog.ProductSpecification;
 import com.mtulkanov.po.clients.ProductSpecificationRepository;
-import com.mtulkanov.po.exceptions.EventNotRaisedException;
 import com.mtulkanov.po.exceptions.OrderNotFoundException;
 import com.mtulkanov.po.kafka.KafkaService;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
 import org.springframework.util.concurrent.FailureCallback;
 import org.springframework.util.concurrent.SuccessCallback;
 
-import javax.websocket.SendResult;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;

@@ -1,7 +1,6 @@
 package com.mtulkanov.po.order;
 
 import com.mtulkanov.po.clients.ProductSpecificationRepository;
-import com.mtulkanov.po.exceptions.EventNotRaisedException;
 import com.mtulkanov.po.exceptions.OrderNotFoundException;
 import com.mtulkanov.po.exceptions.SpecificationNotFoundException;
 import com.mtulkanov.po.kafka.Event;

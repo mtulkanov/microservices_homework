@@ -1,7 +1,6 @@
 package com.mtulkanov.po.kafka;
 
 import com.mtulkanov.po.order.ProductOrder;
-import com.mtulkanov.po.exceptions.EventNotRaisedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -26,4 +25,10 @@ public class KafkaServiceImpl implements KafkaService {
         Event event = new Event(Event.ORDER_CREATED, productOrder.getId());
         kafkaTemplate.send(OUTPUT_EVENT_TOPIC, event);
     }
+
+    @Override
+    public void orderCreated(ProductOrder productOrder) {
+        orderCreated(productOrder, null, null);
+    }
+
 }
