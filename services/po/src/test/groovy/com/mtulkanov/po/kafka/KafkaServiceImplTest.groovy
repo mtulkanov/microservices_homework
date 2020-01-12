@@ -14,7 +14,7 @@ class KafkaServiceImplTest extends Specification {
         Event event = new Event(Event.ORDER_CREATED, ORDER_ID)
 
         when:
-        kafkaService.fire(event)
+        kafkaService.fire(event, null, null)
 
         then:
         1 * kafkaTemplate.send(KafkaServiceImpl.OUTPUT_EVENT_TOPIC, event)

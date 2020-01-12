@@ -44,7 +44,8 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         final String orderId = productOrder.getId();
         var successCallback = successCallback(orderId);
         var failureCallback = failureCallback(orderId);
-        kafkaService.orderCreated(productOrder, successCallback, failureCallback);
+        Event event = new Event(Event.ORDER_CREATED, orderId);
+        kafkaService.fire(event, successCallback, failureCallback);
         return productOrder;
     }
 

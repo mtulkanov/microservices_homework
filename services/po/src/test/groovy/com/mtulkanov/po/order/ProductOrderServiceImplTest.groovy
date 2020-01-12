@@ -2,17 +2,12 @@ package com.mtulkanov.po.order
 
 import com.mtulkanov.eurekaserver.pc.catalog.ProductSpecification
 import com.mtulkanov.po.clients.ProductSpecificationRepository
+import com.mtulkanov.po.exceptions.OrderNotFoundException
 import com.mtulkanov.po.kafka.Event
 import com.mtulkanov.po.kafka.KafkaService
-import com.mtulkanov.po.kafka.KafkaServiceImpl
 import org.springframework.util.concurrent.FailureCallback
 import org.springframework.util.concurrent.SuccessCallback
 import spock.lang.Specification
-
-import static org.mockito.ArgumentMatchers.eq
-import static org.mockito.ArgumentMatchers.isA
-import static org.mockito.ArgumentMatchers.isA
-import static org.mockito.Mockito.verify
 
 class ProductOrderServiceImplTest extends Specification {
 
@@ -21,12 +16,13 @@ class ProductOrderServiceImplTest extends Specification {
 
     private ProductOrder order
     private KafkaService kafkaService
+    private ProductSpecificationRepository specificationRepository;
     private ProductOrderRepository orderRepository
     private ProductOrderService orderService
 
     def setup() {
         def specification = new ProductSpecification();
-        ProductSpecificationRepository specificationRepository = Stub {
+        specificationRepository = Stub(ProductSpecificationRepository) {
             existsById(SPECIFICATION_ID) >> specification;
         }
 
@@ -37,12 +33,12 @@ class ProductOrderServiceImplTest extends Specification {
                 ProductOrder.SUSPENDED
         );
 
-        ProductOrderRepository orderRepository = Stub {
+        orderRepository = Stub(ProductOrderRepository) {
             save(_) >> order;
-            findById(_) >> order
+            findById(_) >> Optional.of(order)
         }
 
-        KafkaService kafkaService = Mock();
+        kafkaService = Mock();
 
         orderService = new ProductOrderServiceImpl(
                 orderRepository,
@@ -64,12 +60,38 @@ class ProductOrderServiceImplTest extends Specification {
         orderService.orderProductBySpecificationId(SPECIFICATION_ID);
 
         then:
-//        verify(kafkaService).orderCreated(eq(order), isA(SuccessCallback.class), isA(FailureCallback.class));
         1 * kafkaService.fire(
-            KafkaServiceImpl.OUTPUT_EVENT_TOPIC,
-            _ as Event,
-            _ as FailureCallback,
-            _ as FailureCallback
+                _ as Event,
+                _ as SuccessCallback,
+                _ as FailureCallback
         )
+    }
+
+    def 'should reject order'() {
+        when:
+        ProductOrder rejectedOrder = orderService.rejectOrder(ORDER_ID)
+
+        then:
+        ProductOrder.REJECTED == rejectedOrder.getStatus()
+    }
+
+    def 'should throw correct exception on rejection if order was not found'() {
+        given:
+        String errorMessage = "Could not find order " + ORDER_ID;
+        def exception = new OrderNotFoundException(errorMessage);
+        orderRepository = Stub(ProductOrderRepository) {
+            orderRepository.findById(_) >> { throw exception }
+        }
+        orderService = new ProductOrderServiceImpl(
+                orderRepository,
+                specificationRepository,
+                kafkaService
+        );
+
+        when:
+        orderService.rejectOrder(ORDER_ID)
+
+        then:
+        thrown(OrderNotFoundException)
     }
 }
