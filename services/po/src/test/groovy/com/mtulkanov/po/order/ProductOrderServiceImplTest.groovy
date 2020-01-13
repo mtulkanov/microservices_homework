@@ -34,8 +34,8 @@ class ProductOrderServiceImplTest extends Specification {
         )
 
         orderRepository = Stub(ProductOrderRepository) {
-            save(_) >> order
-            findById(_) >> Optional.of(order)
+            save(_ as ProductOrder) >> order
+            findById(_ as String) >> Optional.of(order)
         }
 
         kafkaService = Mock()
@@ -80,7 +80,7 @@ class ProductOrderServiceImplTest extends Specification {
         String errorMessage = "Could not find order " + ORDER_ID
         def exception = new OrderNotFoundException(errorMessage)
         orderRepository = Stub(ProductOrderRepository) {
-            orderRepository.findById(_) >> { throw exception }
+            orderRepository.findById(_ as String) >> { throw exception }
         }
         orderService = new ProductOrderServiceImpl(
                 orderRepository,
