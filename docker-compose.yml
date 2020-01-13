@@ -30,6 +30,35 @@ services:
     image: mongo
     ports:
       - "27017:27017"
+  zookeeper:
+    image: 'bitnami/zookeeper:3'
+    ports:
+      - '2181:2181'
+    volumes:
+      - 'zookeeper_data:/bitnami'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: 'bitnami/kafka:2'
+    ports:
+      - '9092:9092'
+    volumes:
+      - 'kafka_data:/bitnami'
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+    depends_on:
+      - kafka
+    restart: on-failure
   pc:
     image: mtulkanov/pc:1.0.0
     depends_on:
@@ -46,6 +75,7 @@ services:
       - eureka2
       - mongo
       - pc
+      - kafka
     restart: on-failure
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:$ELK_VERSION
@@ -80,3 +110,9 @@ services:
     restart: on-failure
     networks:
       - default
+
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local
