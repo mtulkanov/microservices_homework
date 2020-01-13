@@ -42,4 +42,9 @@ public class KafkaGatewayImpl implements KafkaGateway {
                 kafkaTemplate.send(OUTPUT_EVENT_TOPIC, event);
         future.addCallback(successCallback, failureCallback);
     }
+
+    @Override
+    public void fire(Event event) {
+        kafkaTemplate.send(OUTPUT_EVENT_TOPIC, event);
+    }
 }

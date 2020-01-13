@@ -20,4 +20,6 @@ public interface KafkaGateway {
             SuccessCallback<SendResult<String, Event>> successCallback,
             FailureCallback failureCallback
     );
+
+    void fire(Event event);
 }

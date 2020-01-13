@@ -50,7 +50,7 @@ class KafkaIntegrationTest extends Specification {
         kafkaBroker.consumeFromAnEmbeddedTopic(consumer, KafkaGatewayImpl.OUTPUT_EVENT_TOPIC)
 
         when:
-        kafkaGateway.fire(event, null, null)
+        kafkaGateway.fire(event)
 
         then:
         ConsumerRecord<String, Event> record = getSingleRecord(

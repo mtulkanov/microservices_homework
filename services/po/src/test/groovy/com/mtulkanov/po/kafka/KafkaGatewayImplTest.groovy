@@ -14,7 +14,7 @@ class KafkaGatewayImplTest extends Specification {
         Event event = new Event(Event.ORDER_CREATED, ORDER_ID)
 
         when:
-        kafkaService.fire(event, null, null)
+        kafkaService.fire(event)
 
         then:
         1 * kafkaTemplate.send(KafkaGatewayImpl.OUTPUT_EVENT_TOPIC, event)
