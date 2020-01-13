@@ -78,6 +78,16 @@ services:
       - pc
       - kafka
     restart: on-failure
+  ps:
+    image: mtulkanov/ps:1.0.0
+    depends_on:
+      - config
+      - eureka1
+      - eureka2
+      - mongo
+      - po
+      - kafka
+    restart: on-failure
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:$ELK_VERSION
     ports:
