@@ -6,6 +6,7 @@ import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.FailureCallback;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.SuccessCallback;
 
 @Service
@@ -37,6 +38,8 @@ public class KafkaGatewayImpl implements KafkaGateway {
             SuccessCallback<SendResult<String, Event>> successCallback,
             FailureCallback failureCallback
     ) {
-        kafkaTemplate.send(OUTPUT_EVENT_TOPIC, event);
+        ListenableFuture<SendResult<String, Event>> future =
+                kafkaTemplate.send(OUTPUT_EVENT_TOPIC, event);
+        future.addCallback(successCallback, failureCallback);
     }
 }
