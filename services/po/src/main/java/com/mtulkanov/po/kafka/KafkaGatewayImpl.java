@@ -9,11 +9,11 @@ import org.springframework.util.concurrent.FailureCallback;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.SuccessCallback;
 
+import static com.mtulkanov.po.kafka.KafkaConfig.OUTPUT_EVENT_TOPIC;
+
 @Service
 @RequiredArgsConstructor
 public class KafkaGatewayImpl implements KafkaGateway {
-
-    public static final String OUTPUT_EVENT_TOPIC = "OUTPUT_EVENT";
 
     private final KafkaOperations<String, Event> kafkaTemplate;
 

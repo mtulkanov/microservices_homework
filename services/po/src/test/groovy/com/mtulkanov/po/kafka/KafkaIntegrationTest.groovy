@@ -20,7 +20,7 @@ import static org.springframework.kafka.test.utils.KafkaTestUtils.getSingleRecor
 
 @EmbeddedKafka(
         partitions = 1,
-        topics = [KafkaGatewayImpl.OUTPUT_EVENT_TOPIC]
+        topics = [KafkaConfig.OUTPUT_EVENT_TOPIC]
 )
 @SpringBootTest(
         properties = ['spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}'],
@@ -47,7 +47,7 @@ class KafkaIntegrationTest extends Specification {
                 StringDeserializer,
                 JsonDeserializer
         )
-        kafkaBroker.consumeFromAnEmbeddedTopic(consumer, KafkaGatewayImpl.OUTPUT_EVENT_TOPIC)
+        kafkaBroker.consumeFromAnEmbeddedTopic(consumer, KafkaConfig.OUTPUT_EVENT_TOPIC)
 
         when:
         kafkaGateway.fire(event)
@@ -55,7 +55,7 @@ class KafkaIntegrationTest extends Specification {
         then:
         ConsumerRecord<String, Event> record = getSingleRecord(
                 consumer,
-                KafkaGatewayImpl.OUTPUT_EVENT_TOPIC,
+                KafkaConfig.OUTPUT_EVENT_TOPIC,
                 500
         )
         Event comsumedEvent = record.value()

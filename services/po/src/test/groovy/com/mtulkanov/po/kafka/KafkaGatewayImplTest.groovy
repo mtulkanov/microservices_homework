@@ -17,6 +17,6 @@ class KafkaGatewayImplTest extends Specification {
         kafkaService.fire(event)
 
         then:
-        1 * kafkaTemplate.send(KafkaGatewayImpl.OUTPUT_EVENT_TOPIC, event)
+        1 * kafkaTemplate.send(KafkaConfig.OUTPUT_EVENT_TOPIC, event)
     }
 }
