@@ -49,6 +49,7 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
+    restart: on-failure
   kafdrop:
     image: obsidiandynamics/kafdrop
     ports:
