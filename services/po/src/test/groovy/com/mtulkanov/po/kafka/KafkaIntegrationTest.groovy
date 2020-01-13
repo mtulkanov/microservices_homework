@@ -1,6 +1,5 @@
 package com.mtulkanov.po.kafka
 
-import com.mtulkanov.po.order.ProductOrder
 import lombok.extern.slf4j.Slf4j
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
-import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.serializer.JsonDeserializer
 import org.springframework.kafka.test.EmbeddedKafkaBroker
 import org.springframework.kafka.test.context.EmbeddedKafka
@@ -35,33 +33,24 @@ import static org.springframework.kafka.test.utils.KafkaTestUtils.getSingleRecor
 class KafkaIntegrationTest extends Specification {
 
     private static final String ORDER_ID = "ORDER_ID"
-    private static final String SPECIFICATION_ID = "SPECIFICATION_ID"
 
     @Autowired
-    private KafkaGateway kafkaService
+    private KafkaGateway kafkaGateway
 
     @Autowired
     private EmbeddedKafkaBroker kafkaBroker
 
-    @Autowired
-    private KafkaTemplate<String, Event> kafkaTemplate
-
     def 'order created event should be sent to kafka'() {
         given:
-        ProductOrder order = new ProductOrder(
-                ORDER_ID,
-                SPECIFICATION_ID,
-                1L,
-                ProductOrder.SUSPENDED
-        )
-        Consumer<String, Event> consumer = this.<String, Event>buildConsumer(
+        def event = new Event(Event.ORDER_CREATED, ORDER_ID)
+        Consumer<String, Event> consumer = this.<String, Event> buildConsumer(
                 StringDeserializer,
                 JsonDeserializer
         )
         kafkaBroker.consumeFromAnEmbeddedTopic(consumer, KafkaGatewayImpl.OUTPUT_EVENT_TOPIC)
 
         when:
-        kafkaService.orderCreated(order)
+        kafkaGateway.fire(event, null, null)
 
         then:
         ConsumerRecord<String, Event> record = getSingleRecord(
@@ -69,10 +58,10 @@ class KafkaIntegrationTest extends Specification {
                 KafkaGatewayImpl.OUTPUT_EVENT_TOPIC,
                 500
         )
-        Event event = record.value()
+        Event comsumedEvent = record.value()
 
-        ORDER_ID == event.getOrderId()
-        Event.ORDER_CREATED == event.getType()
+        ORDER_ID == comsumedEvent.getOrderId()
+        Event.ORDER_CREATED == comsumedEvent.getType()
     }
 
     private <K, V> Consumer<K, V> buildConsumer(
