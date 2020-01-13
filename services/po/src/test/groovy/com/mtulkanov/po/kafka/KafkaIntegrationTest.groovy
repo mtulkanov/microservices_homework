@@ -34,17 +34,17 @@ import static org.springframework.kafka.test.utils.KafkaTestUtils.getSingleRecor
 @Slf4j
 class KafkaIntegrationTest extends Specification {
 
-    private static final String ORDER_ID = "ORDER_ID";
-    private static final String SPECIFICATION_ID = "SPECIFICATION_ID";
+    private static final String ORDER_ID = "ORDER_ID"
+    private static final String SPECIFICATION_ID = "SPECIFICATION_ID"
 
     @Autowired
-    private KafkaGateway kafkaService;
+    private KafkaGateway kafkaService
 
     @Autowired
-    private EmbeddedKafkaBroker kafkaBroker;
+    private EmbeddedKafkaBroker kafkaBroker
 
     @Autowired
-    private KafkaTemplate<String, Event> kafkaTemplate;
+    private KafkaTemplate<String, Event> kafkaTemplate
 
     def 'order created event should be sent to kafka'() {
         given:
@@ -53,23 +53,23 @@ class KafkaIntegrationTest extends Specification {
                 SPECIFICATION_ID,
                 1L,
                 ProductOrder.SUSPENDED
-        );
+        )
         Consumer<String, Event> consumer = this.<String, Event>buildConsumer(
                 StringDeserializer,
                 JsonDeserializer
         )
-        kafkaBroker.consumeFromAnEmbeddedTopic(consumer, KafkaGatewayImpl.OUTPUT_EVENT_TOPIC);
+        kafkaBroker.consumeFromAnEmbeddedTopic(consumer, KafkaGatewayImpl.OUTPUT_EVENT_TOPIC)
 
         when:
-        kafkaService.orderCreated(order);
+        kafkaService.orderCreated(order)
 
         then:
         ConsumerRecord<String, Event> record = getSingleRecord(
                 consumer,
                 KafkaGatewayImpl.OUTPUT_EVENT_TOPIC,
                 500
-        );
-        Event event = record.value();
+        )
+        Event event = record.value()
 
         ORDER_ID == event.getOrderId()
         Event.ORDER_CREATED == event.getType()
@@ -83,13 +83,13 @@ class KafkaIntegrationTest extends Specification {
                 "testOrderCreatedEventWasSentToKafka",
                 "true",
                 kafkaBroker
-        );
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer);
+        )
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*")
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer)
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer)
 
-        def factory = new DefaultKafkaConsumerFactory<K, V>(props);
-        return factory.createConsumer();
+        def factory = new DefaultKafkaConsumerFactory<K, V>(props)
+        return factory.createConsumer()
     }
 }

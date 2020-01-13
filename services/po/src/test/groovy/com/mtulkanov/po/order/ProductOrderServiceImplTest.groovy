@@ -16,14 +16,14 @@ class ProductOrderServiceImplTest extends Specification {
 
     private ProductOrder order
     private KafkaGateway kafkaService
-    private ProductSpecificationRepository specificationRepository;
+    private ProductSpecificationRepository specificationRepository
     private ProductOrderRepository orderRepository
     private ProductOrderService orderService
 
     def setup() {
-        def specification = new ProductSpecification();
+        def specification = new ProductSpecification()
         specificationRepository = Stub(ProductSpecificationRepository) {
-            existsById(SPECIFICATION_ID) >> specification;
+            existsById(SPECIFICATION_ID) >> specification
         }
 
         order = new ProductOrder(
@@ -31,20 +31,20 @@ class ProductOrderServiceImplTest extends Specification {
                 SPECIFICATION_ID,
                 1L,
                 ProductOrder.SUSPENDED
-        );
+        )
 
         orderRepository = Stub(ProductOrderRepository) {
-            save(_) >> order;
+            save(_) >> order
             findById(_) >> Optional.of(order)
         }
 
-        kafkaService = Mock();
+        kafkaService = Mock()
 
         orderService = new ProductOrderServiceImpl(
                 orderRepository,
                 specificationRepository,
                 kafkaService
-        );
+        )
     }
 
     def 'should create suspended order'() {
@@ -57,7 +57,7 @@ class ProductOrderServiceImplTest extends Specification {
 
     def 'should fire event on order creation'() {
         when:
-        orderService.orderProductBySpecificationId(SPECIFICATION_ID);
+        orderService.orderProductBySpecificationId(SPECIFICATION_ID)
 
         then:
         1 * kafkaService.fire(
@@ -77,8 +77,8 @@ class ProductOrderServiceImplTest extends Specification {
 
     def 'should throw correct exception on rejection if order was not found'() {
         given:
-        String errorMessage = "Could not find order " + ORDER_ID;
-        def exception = new OrderNotFoundException(errorMessage);
+        String errorMessage = "Could not find order " + ORDER_ID
+        def exception = new OrderNotFoundException(errorMessage)
         orderRepository = Stub(ProductOrderRepository) {
             orderRepository.findById(_) >> { throw exception }
         }
@@ -86,7 +86,7 @@ class ProductOrderServiceImplTest extends Specification {
                 orderRepository,
                 specificationRepository,
                 kafkaService
-        );
+        )
 
         when:
         orderService.rejectOrder(ORDER_ID)
