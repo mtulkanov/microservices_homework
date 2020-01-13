@@ -4,7 +4,7 @@ import com.mtulkanov.eurekaserver.pc.catalog.ProductSpecification
 import com.mtulkanov.po.clients.ProductSpecificationRepository
 import com.mtulkanov.po.exceptions.OrderNotFoundException
 import com.mtulkanov.po.kafka.Event
-import com.mtulkanov.po.kafka.KafkaService
+import com.mtulkanov.po.kafka.KafkaGateway
 import org.springframework.util.concurrent.FailureCallback
 import org.springframework.util.concurrent.SuccessCallback
 import spock.lang.Specification
@@ -15,7 +15,7 @@ class ProductOrderServiceImplTest extends Specification {
     private static final String SPECIFICATION_ID = "SPECIFICATION_ID"
 
     private ProductOrder order
-    private KafkaService kafkaService
+    private KafkaGateway kafkaService
     private ProductSpecificationRepository specificationRepository;
     private ProductOrderRepository orderRepository
     private ProductOrderService orderService

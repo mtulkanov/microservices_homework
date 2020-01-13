@@ -4,7 +4,7 @@ import com.mtulkanov.po.clients.ProductSpecificationRepository;
 import com.mtulkanov.po.exceptions.OrderNotFoundException;
 import com.mtulkanov.po.exceptions.SpecificationNotFoundException;
 import com.mtulkanov.po.kafka.Event;
-import com.mtulkanov.po.kafka.KafkaService;
+import com.mtulkanov.po.kafka.KafkaGateway;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.support.SendResult;
@@ -25,7 +25,7 @@ import java.util.Optional;
 public class ProductOrderServiceImpl implements ProductOrderService {
     private final ProductOrderRepository orderRepository;
     private final ProductSpecificationRepository specificationRepository;
-    private final KafkaService kafkaService;
+    private final KafkaGateway kafkaGateway;
 
     public ProductOrder orderProductBySpecificationId(String specificationId) {
         if (specificationRepository.existsById(specificationId) == null) {
@@ -45,7 +45,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         var successCallback = successCallback(orderId);
         var failureCallback = failureCallback(orderId);
         Event event = new Event(Event.ORDER_CREATED, orderId);
-        kafkaService.fire(event, successCallback, failureCallback);
+        kafkaGateway.fire(event, successCallback, failureCallback);
         return productOrder;
     }
 

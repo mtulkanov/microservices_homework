@@ -5,7 +5,7 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.FailureCallback;
 import org.springframework.util.concurrent.SuccessCallback;
 
-public interface KafkaService {
+public interface KafkaGateway {
 
     void orderCreated(
             ProductOrder productOrder,

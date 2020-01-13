@@ -22,12 +22,12 @@ import static org.springframework.kafka.test.utils.KafkaTestUtils.getSingleRecor
 
 @EmbeddedKafka(
         partitions = 1,
-        topics = [KafkaServiceImpl.OUTPUT_EVENT_TOPIC]
+        topics = [KafkaGatewayImpl.OUTPUT_EVENT_TOPIC]
 )
 @SpringBootTest(
         properties = ['spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}'],
         classes = [
-                KafkaServiceImpl,
+                KafkaGatewayImpl,
                 KafkaAutoConfiguration,
         ]
 )
@@ -38,7 +38,7 @@ class KafkaIntegrationTest extends Specification {
     private static final String SPECIFICATION_ID = "SPECIFICATION_ID";
 
     @Autowired
-    private KafkaService kafkaService;
+    private KafkaGateway kafkaService;
 
     @Autowired
     private EmbeddedKafkaBroker kafkaBroker;
@@ -58,7 +58,7 @@ class KafkaIntegrationTest extends Specification {
                 StringDeserializer,
                 JsonDeserializer
         )
-        kafkaBroker.consumeFromAnEmbeddedTopic(consumer, KafkaServiceImpl.OUTPUT_EVENT_TOPIC);
+        kafkaBroker.consumeFromAnEmbeddedTopic(consumer, KafkaGatewayImpl.OUTPUT_EVENT_TOPIC);
 
         when:
         kafkaService.orderCreated(order);
@@ -66,7 +66,7 @@ class KafkaIntegrationTest extends Specification {
         then:
         ConsumerRecord<String, Event> record = getSingleRecord(
                 consumer,
-                KafkaServiceImpl.OUTPUT_EVENT_TOPIC,
+                KafkaGatewayImpl.OUTPUT_EVENT_TOPIC,
                 500
         );
         Event event = record.value();

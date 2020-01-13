@@ -10,7 +10,7 @@ import org.springframework.util.concurrent.SuccessCallback;
 
 @Service
 @RequiredArgsConstructor
-public class KafkaServiceImpl implements KafkaService {
+public class KafkaGatewayImpl implements KafkaGateway {
 
     public static final String OUTPUT_EVENT_TOPIC = "OUTPUT_EVENT";
 
