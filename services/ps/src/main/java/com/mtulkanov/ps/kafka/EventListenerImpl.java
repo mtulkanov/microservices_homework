@@ -16,6 +16,7 @@ public class EventListenerImpl implements EventListener {
     public void listenOrders(Event event) {
         if (event.getType().equals(Event.ORDER_CREATED)) {
             shipmentService.createShipment(event.getOrderId());
+            return;
         }
         throw new UnknownEventException("Unknown event type: " + event.getType());
     }
