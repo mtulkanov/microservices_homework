@@ -2,12 +2,14 @@ package com.mtulkanov.ps.shipment;
 
 import com.mtulkanov.po.exceptions.OrderNotFoundException;
 import com.mtulkanov.po.order.ProductOrder;
-import com.mtulkanov.po.order.ProductOrderRepository;
+import com.mtulkanov.ps.order.ProductOrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 @RequiredArgsConstructor
 @Slf4j
 public class ShipmentServiceImpl implements ShipmentService {
