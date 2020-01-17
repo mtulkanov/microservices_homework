@@ -46,4 +46,42 @@ class ShipmentServiceImplTest extends Specification {
         then:
         1 * shipmentRepository.save(_ as Shipment)
     }
+
+    def 'should ignore rejected orders'() {
+        given:
+        def order = new ProductOrder(ORDER_ID, SPECIFICATION_ID, 1L, ProductOrder.REJECTED)
+        ProductOrderRepository orderRepository = Stub(ProductOrderRepository) {
+            findById(_ as String) >> Optional.of(order)
+        }
+        ShipmentRepository shipmentRepository = Mock()
+        ShipmentService shipmentService = new ShipmentServiceImpl(
+                orderRepository,
+                shipmentRepository
+        )
+
+        when:
+        shipmentService.createShipment(ORDER_ID)
+
+        then:
+        0 * shipmentRepository.save(_ as Shipment)
+    }
+
+    def 'should ignore accepted orders'() {
+        given:
+        def order = new ProductOrder(ORDER_ID, SPECIFICATION_ID, 1L, ProductOrder.ACCEPTED)
+        ProductOrderRepository orderRepository = Stub(ProductOrderRepository) {
+            findById(_ as String) >> Optional.of(order)
+        }
+        ShipmentRepository shipmentRepository = Mock()
+        ShipmentService shipmentService = new ShipmentServiceImpl(
+                orderRepository,
+                shipmentRepository
+        )
+
+        when:
+        shipmentService.createShipment(ORDER_ID)
+
+        then:
+        0 * shipmentRepository.save(_ as Shipment)
+    }
 }

@@ -14,8 +14,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @AllArgsConstructor
 public class ProductOrder {
-    public static final String REJECTED = "REJECTED";
     public static final String SUSPENDED = "SUSPENDED";
+    public static final String REJECTED = "REJECTED";
+    public static final String ACCEPTED = "ACCEPTED";
 
     @Id
     private String id;
