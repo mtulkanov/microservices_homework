@@ -4,6 +4,7 @@ import com.mtulkanov.eurekaserver.pc.catalog.ProductSpecification
 import com.mtulkanov.po.clients.ProductSpecificationRepository
 import com.mtulkanov.po.exceptions.OrderNotFoundException
 import com.mtulkanov.po.kafka.Event
+import com.mtulkanov.po.kafka.EventRepository
 import com.mtulkanov.po.kafka.KafkaGateway
 import org.springframework.util.concurrent.FailureCallback
 import org.springframework.util.concurrent.SuccessCallback
@@ -13,12 +14,14 @@ class ProductOrderServiceImplTest extends Specification {
 
     private static final String ORDER_ID = "ORDER_ID"
     private static final String SPECIFICATION_ID = "SPECIFICATION_ID"
+    private static final String EVENT_ID = "EVENT_ID"
 
     private ProductOrder order
     private KafkaGateway kafkaService
     private ProductSpecificationRepository specificationRepository
     private ProductOrderRepository orderRepository
     private ProductOrderService orderService
+    private EventRepository eventRepository
 
     def setup() {
         def specification = new ProductSpecification()
@@ -38,6 +41,12 @@ class ProductOrderServiceImplTest extends Specification {
             findById(_ as String) >> Optional.of(order)
         }
 
+        def event = new Event(EVENT_ID, Event.ORDER_CREATED, ORDER_ID)
+
+        eventRepository = Mock(EventRepository) {
+            save(_ as Event) >> event
+        }
+
         kafkaService = Mock()
 
         orderService = new ProductOrderServiceImpl(
@@ -55,16 +64,12 @@ class ProductOrderServiceImplTest extends Specification {
         orderReturned.getStatus() == ProductOrder.SUSPENDED
     }
 
-    def 'should fire event on order creation'() {
+    def 'should create event on order creation'() {
         when:
         orderService.orderProductBySpecificationId(SPECIFICATION_ID)
 
         then:
-        1 * kafkaService.fire(
-                _ as Event,
-                _ as SuccessCallback,
-                _ as FailureCallback
-        )
+        1 * eventRepository.save(_ as Event)
     }
 
     def 'should reject order'() {
