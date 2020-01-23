@@ -12,9 +12,9 @@ spring:
     discovery:
       enabled: false
   kafka:
-    enable: false
+    enable: true
     bootstrapServers:
-      - "kafka:9092"
+      - "localhost:9092"
     producer:
       valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:

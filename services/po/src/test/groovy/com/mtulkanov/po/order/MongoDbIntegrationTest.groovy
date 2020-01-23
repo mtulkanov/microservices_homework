@@ -3,6 +3,7 @@ package com.mtulkanov.po.order
 import com.mtulkanov.po.order.ProductOrder
 import com.mtulkanov.po.order.ProductOrderRepository
 import groovy.util.logging.Slf4j
+import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Specification

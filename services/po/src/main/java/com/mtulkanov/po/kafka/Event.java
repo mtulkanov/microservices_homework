@@ -2,7 +2,6 @@ package com.mtulkanov.po.kafka;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,19 +13,19 @@ public class Event {
 
     public Event() {}
 
-    public Event(String type, ObjectId orderId) {
+    public Event(String type, String orderId) {
         this.type = type;
         this.orderId = orderId;
     }
 
-    public Event(ObjectId id, String type, ObjectId orderId) {
+    public Event(String id, String type, String orderId) {
         this.id = id;
         this.type = type;
         this.orderId = orderId;
     }
 
     @Id
-    private ObjectId id;
-    private ObjectId orderId;
+    private String id;
+    private String orderId;
     private String type;
 }

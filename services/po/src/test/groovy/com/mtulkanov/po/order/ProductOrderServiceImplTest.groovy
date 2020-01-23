@@ -5,19 +5,16 @@ import com.mtulkanov.po.clients.ProductSpecificationRepository
 import com.mtulkanov.po.exceptions.OrderNotFoundException
 import com.mtulkanov.po.kafka.Event
 import com.mtulkanov.po.kafka.EventRepository
-import com.mtulkanov.po.kafka.KafkaGateway
-import org.springframework.util.concurrent.FailureCallback
-import org.springframework.util.concurrent.SuccessCallback
+
+import org.bson.types.ObjectId
 import spock.lang.Specification
 
 class ProductOrderServiceImplTest extends Specification {
 
-    private static final String ORDER_ID = "ORDER_ID"
-    private static final String SPECIFICATION_ID = "SPECIFICATION_ID"
-    private static final String EVENT_ID = "EVENT_ID"
+    private static final String ORDER_ID = 'ORDER_ID'
+    private static final String SPECIFICATION_ID = 'SPECIFICATION_ID'
 
     private ProductOrder order
-    private KafkaGateway kafkaService
     private ProductSpecificationRepository specificationRepository
     private ProductOrderRepository orderRepository
     private ProductOrderService orderService
@@ -41,18 +38,16 @@ class ProductOrderServiceImplTest extends Specification {
             findById(_ as String) >> Optional.of(order)
         }
 
-        def event = new Event(EVENT_ID, Event.ORDER_CREATED, ORDER_ID)
+        def event = new Event(Event.ORDER_CREATED, ORDER_ID)
 
         eventRepository = Mock(EventRepository) {
             save(_ as Event) >> event
         }
 
-        kafkaService = Mock()
-
         orderService = new ProductOrderServiceImpl(
                 orderRepository,
                 specificationRepository,
-                kafkaService
+                eventRepository
         )
     }
 
@@ -90,7 +85,7 @@ class ProductOrderServiceImplTest extends Specification {
         orderService = new ProductOrderServiceImpl(
                 orderRepository,
                 specificationRepository,
-                kafkaService
+                eventRepository
         )
 
         when:

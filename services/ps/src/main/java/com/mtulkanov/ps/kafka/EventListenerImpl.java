@@ -16,7 +16,7 @@ public class EventListenerImpl implements EventListener {
     private final ShipmentService shipmentService;
 
     @Override
-    @KafkaListener
+    @KafkaListener(topics = "order_events")
     public void listenOrders(Event event) {
         log.info("Received event: {}", event);
         if (event.getType().equals(Event.ORDER_CREATED)) {
